@@ -7,7 +7,6 @@ import { loginSchema } from "./validator.server";
 type User = {
 	id: string;
 	email: string;
-	username: string;
 };
 
 export const authenticator = new Authenticator<User>(sessionStorage);
@@ -15,7 +14,7 @@ export const authenticator = new Authenticator<User>(sessionStorage);
 authenticator.use(
 	new FormStrategy(async ({ form }) => {
 		const user = loginSchema.parse(form);
-		return verifyUser({ identifier: user.identifier! || user.username!, password: user.password });
+		return verifyUser({ email: user.email, password: user.password });
 	}),
 	"user-pass",
 );

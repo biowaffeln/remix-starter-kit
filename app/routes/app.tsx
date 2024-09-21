@@ -16,7 +16,7 @@ export default function App() {
 
 	return (
 		<div className="flex h-screen flex-col items-center justify-center">
-			<p>hello, {user.username}</p>
+			<p>logged in as {user.email}</p>
 			<Link
 				className="text-indigo-500 underline underline-offset-2 hover:text-indigo-600"
 				to="/logout"

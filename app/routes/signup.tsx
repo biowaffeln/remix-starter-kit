@@ -23,7 +23,7 @@ export async function action({ request }: LoaderFunctionArgs) {
 		if (result instanceof UserError) {
 			return json({ error: result.message });
 		}
-		console.log(result);
+		console.error(result);
 		return json({ error: `An unexpected error occurred. Please try again.` });
 	}
 }
@@ -43,17 +43,6 @@ export default function Signup() {
 				<h1 className="mb-6 text-center text-2xl font-semibold">Sign up</h1>
 				<Form method="post" className="flex flex-col gap-6">
 					<div className="flex flex-col gap-1">
-						<label htmlFor="username" className="sr-only">
-							<span className="text-gray-700">Username:</span>
-						</label>
-						<input
-							type="text"
-							name="username"
-							id="username"
-							placeholder="Username"
-							required
-							className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 focus:border-indigo-300 focus:outline-none focus:ring-1 focus:ring-indigo-200"
-						/>
 						<label htmlFor="email" className="sr-only">
 							<span className="text-gray-700">Email:</span>
 						</label>

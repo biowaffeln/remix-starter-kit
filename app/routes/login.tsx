@@ -22,7 +22,6 @@ export async function action({ request }: LoaderFunctionArgs) {
 
 		if (result instanceof AuthorizationError) {
 			if (result.cause instanceof ZodError) {
-				console.log(result.cause.errors);
 				return json({ error: result.cause.errors[0].message });
 			}
 			if (result.cause instanceof UserError) {
@@ -31,6 +30,7 @@ export async function action({ request }: LoaderFunctionArgs) {
 			return json({ error: result.message });
 		}
 
+		console.error(result);
 		return json({ error: `An unexpected error occurred. Please try again.` });
 	}
 }
@@ -44,14 +44,14 @@ export default function Login() {
 				<h1 className="mb-6 text-center text-2xl font-semibold">Login</h1>
 				<Form method="post" className="flex flex-col gap-6">
 					<div className="flex flex-col gap-1">
-						<label htmlFor="identifier" className="sr-only">
-							<span className="text-gray-700">Username or Email:</span>
+						<label htmlFor="email" className="sr-only">
+							<span className="text-gray-700">Email:</span>
 						</label>
 						<input
-							type="text"
-							name="identifier"
-							id="identifier"
-							placeholder="Username or Email"
+							type="email"
+							name="email"
+							id="email"
+							placeholder="Email"
 							required
 							className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 focus:border-indigo-300 focus:outline-none focus:ring-1 focus:ring-indigo-200"
 						/>

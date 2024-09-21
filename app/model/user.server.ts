@@ -1,6 +1,6 @@
 import { db, schema } from "~/db";
 import { createHash, randomUUID } from "crypto";
-import { and, eq, or } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 function hashPassword(password: string) {
 	return createHash("sha256").update(password).digest("hex");
@@ -13,64 +13,39 @@ export class UserError extends Error {
 	}
 }
 
-export async function createUser({
-	email,
-	password,
-	username,
-}: {
-	email: string;
-	password: string;
-	username: string;
-}) {
+export async function createUser({ email, password }: { email: string; password: string }) {
 	const existingUser = await db
 		.select()
 		.from(schema.users)
-		.where(or(eq(schema.users.email, email), eq(schema.users.username, username)))
+		.where(eq(schema.users.email, email))
 		.get();
 
 	if (existingUser) {
-		if (existingUser.email === email) {
-			throw new UserError("Email already exists");
-		}
-		if (existingUser.username === username) {
-			throw new UserError("Username already exists");
-		}
+		throw new UserError("Email already exists");
 	}
 
 	const user = await db
 		.insert(schema.users)
-		.values({ id: randomUUID(), email, password: hashPassword(password), username })
+		.values({ id: randomUUID(), email, password: hashPassword(password) })
 		.returning()
 		.get();
 
 	return user;
 }
 
-export async function verifyUser({
-	identifier,
-	password,
-}: {
-	identifier: string;
-	password: string;
-}) {
+export async function verifyUser({ email, password }: { email: string; password: string }) {
 	const user = await db
 		.select()
 		.from(schema.users)
-		.where(
-			and(
-				or(eq(schema.users.email, identifier), eq(schema.users.username, identifier)),
-				eq(schema.users.password, hashPassword(password)),
-			),
-		)
+		.where(and(eq(schema.users.email, email), eq(schema.users.password, hashPassword(password))))
 		.get();
 
 	if (!user) {
-		throw new UserError("Invalid username/email or password");
+		throw new UserError("Invalid email or password");
 	}
 
 	return {
 		id: user.id,
 		email: user.email,
-		username: user.username,
 	};
 }
