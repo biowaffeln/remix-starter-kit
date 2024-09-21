@@ -1,14 +1,15 @@
 import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { authenticator } from "~/auth/auth.server";
+import Link from "~/components/styled-link";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const user = await authenticator.isAuthenticated(request);
 	if (!user) {
 		return redirect("/login");
+	} else {
+		return json({ user });
 	}
-
-	return json({ user });
 }
 
 export default function App() {
@@ -16,11 +17,9 @@ export default function App() {
 
 	return (
 		<div className="flex h-screen flex-col items-center justify-center">
-			<p>logged in as {user.email}</p>
-			<Link
-				className="text-indigo-500 underline underline-offset-2 hover:text-indigo-600"
-				to="/logout"
-			>
+			<h2 className="text-2xl font-medium">main app screen</h2>
+			<p className="text-gray-500">logged in as {user.email}</p>
+			<Link className="mt-2" to="/logout">
 				logout
 			</Link>
 		</div>

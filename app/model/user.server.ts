@@ -41,7 +41,7 @@ export async function verifyUser({ email, password }: { email: string; password:
 		.get();
 
 	if (!user) {
-		throw new UserError("Invalid email or password");
+		throw new UserError("Invalid email or password.");
 	}
 
 	return {
