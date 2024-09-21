@@ -4,7 +4,7 @@ import { sessionStorage } from "~/auth/session.server";
 import { verifyUser } from "~/model/user.server";
 import { loginSchema } from "./validator.server";
 
-type User = {
+export type User = {
 	id: string;
 	email: string;
 };
