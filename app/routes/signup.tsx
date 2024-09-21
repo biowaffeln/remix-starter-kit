@@ -1,14 +1,14 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { createUser, UserError } from "~/model/user.server";
-import { authenticator } from "~/auth/auth.server";
 import { Form, useActionData } from "@remix-run/react";
-import { ZodError } from "zod";
-import { signupSchema } from "~/auth/validator.server";
+import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { match, P } from "ts-pattern";
+import { ZodError } from "zod";
+import { authenticator } from "~/auth/auth.server";
+import { createUser, UserError } from "~/auth/user.server";
+import { signupSchema } from "~/auth/validator.server";
+import Alert from "~/components/alert";
 import Button from "~/components/button";
 import Input from "~/components/input";
 import Link from "~/components/styled-link";
-import Alert from "~/components/alert";
 
 export async function action({ request }: LoaderFunctionArgs) {
 	try {

@@ -1,16 +1,24 @@
-import { createSessionStorage } from "@remix-run/node";
-import { User } from "./auth.server";
+import { createCookie, createSessionStorage } from "@remix-run/node";
 import { db, schema } from "~/db";
 import { eq } from "drizzle-orm";
+import { randomUUID } from "crypto";
+import type { User } from "~/auth/user.server";
+
+const days = (n: number) => n * 24 * 60 * 60 * 1000;
+
+const EXPIRATION = days(14);
+const EXPIRATION_MS = EXPIRATION * 1000;
+const EXPIRATION_THRESHOLD_MS = days(7);
+const SESSION_NAME = "_session";
 
 export const sessionStorage = createSessionStorage<{ user: User }>({
 	cookie: {
-		name: "_session",
+		name: SESSION_NAME,
 		sameSite: "lax",
 		path: "/",
 		httpOnly: true,
 		secrets: [process.env.SESSION_SECRET!],
-		maxAge: 60 * 60 * 24 * 30, // 30 days
+		maxAge: EXPIRATION,
 	},
 
 	createData: async (data, expires) => {
@@ -24,19 +32,19 @@ export const sessionStorage = createSessionStorage<{ user: User }>({
 
 		const session = await db
 			.insert(schema.sessions)
-			.values({ id: crypto.randomUUID(), userId: data.user.id, expiresAt: expires.getTime() })
+			.values({ id: randomUUID(), userId: data.user.id, expiresAt: expires.getTime() })
 			.returning({ id: schema.sessions.id })
 			.get();
 
 		return session.id;
 	},
 	readData: async (id) => {
-		console.log("reading session", id);
 		const result = await db
 			.select({
 				sessionId: schema.sessions.id,
 				userId: schema.users.id,
 				userEmail: schema.users.email,
+				expiresAt: schema.sessions.expiresAt,
 			})
 			.from(schema.sessions)
 			.where(eq(schema.sessions.id, id))
@@ -49,20 +57,39 @@ export const sessionStorage = createSessionStorage<{ user: User }>({
 			user: {
 				id: result.userId,
 				email: result.userEmail,
+				expiresAt: result.expiresAt,
 			},
 		};
 	},
 	updateData: async (id) => {
-		console.log("updating session", id);
 		await db
 			.update(schema.sessions)
-			.set({ expiresAt: Date.now() + 60 * 60 * 24 * 30 * 1000 })
+			.set({ expiresAt: Date.now() + EXPIRATION_MS })
 			.where(eq(schema.sessions.id, id));
 	},
 	deleteData: async (id) => {
-		console.log("deleting session", id);
 		await db.delete(schema.sessions).where(eq(schema.sessions.id, id));
 	},
 });
+
+const cookie = createCookie(SESSION_NAME, {});
+export async function clearSession() {
+	return {
+		headers: {
+			"Set-Cookie": await cookie.serialize("", { maxAge: 0 }),
+		},
+	};
+}
+
+export async function handleSessionExpiration(user: User, request: Request) {
+	if (user.expiresAt - Date.now() < EXPIRATION_THRESHOLD_MS) {
+		const session = await getSession(request.headers.get("Cookie"));
+		return {
+			headers: {
+				"Set-Cookie": await commitSession(session),
+			},
+		};
+	}
+}
 
 export const { getSession, commitSession, destroySession } = sessionStorage;

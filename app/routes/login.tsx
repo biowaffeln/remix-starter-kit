@@ -1,10 +1,10 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import { authenticator } from "~/auth/auth.server";
 import { ZodError } from "zod";
 import { AuthorizationError } from "remix-auth";
-import { UserError } from "~/model/user.server";
 import { match, P } from "ts-pattern";
+import { authenticator } from "~/auth/auth.server";
+import { UserError } from "~/auth/user.server";
 import Button from "~/components/button";
 import Input from "~/components/input";
 import Link from "~/components/styled-link";

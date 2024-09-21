@@ -2,6 +2,12 @@ import { db, schema } from "~/db";
 import { createHash, randomUUID } from "crypto";
 import { and, eq } from "drizzle-orm";
 
+export type User = {
+	id: string;
+	email: string;
+	expiresAt: number;
+};
+
 function hashPassword(password: string) {
 	return createHash("sha256").update(password).digest("hex");
 }
@@ -21,7 +27,7 @@ export async function createUser({ email, password }: { email: string; password:
 		.get();
 
 	if (existingUser) {
-		throw new UserError("Email already exists");
+		throw new UserError("Email already exists.");
 	}
 
 	const user = await db
@@ -33,7 +39,13 @@ export async function createUser({ email, password }: { email: string; password:
 	return user;
 }
 
-export async function verifyUser({ email, password }: { email: string; password: string }) {
+export async function verifyUser({
+	email,
+	password,
+}: {
+	email: string;
+	password: string;
+}): Promise<User> {
 	const user = await db
 		.select()
 		.from(schema.users)
@@ -47,5 +59,6 @@ export async function verifyUser({ email, password }: { email: string; password:
 	return {
 		id: user.id,
 		email: user.email,
+		expiresAt: 0,
 	};
 }

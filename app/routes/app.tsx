@@ -1,14 +1,15 @@
 import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { authenticator } from "~/auth/auth.server";
+import { clearSession, handleSessionExpiration } from "~/auth/session.server";
 import Link from "~/components/styled-link";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const user = await authenticator.isAuthenticated(request);
 	if (!user) {
-		return redirect("/login");
+		return redirect("/login", await clearSession());
 	} else {
-		return json({ user });
+		return json({ user }, await handleSessionExpiration(user, request));
 	}
 }
 
