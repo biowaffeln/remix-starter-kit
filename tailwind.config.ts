@@ -12,6 +12,12 @@ export default {
 				gray: colors.stone,
 				primary: colors.pink,
 			}),
+			screens: {
+				"pointer-coarse": { raw: "(pointer: coarse)" },
+			},
+			height: {
+				input: "42px",
+			},
 		},
 	},
 	plugins: [forms],

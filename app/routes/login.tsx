@@ -5,10 +5,10 @@ import { AuthorizationError } from "remix-auth";
 import { match, P } from "ts-pattern";
 import { authenticator } from "~/auth/auth.server";
 import { UserError } from "~/auth/user.server";
-import Button from "~/components/button";
-import Input from "~/components/input";
-import Link from "~/components/styled-link";
-import Alert from "~/components/alert";
+import { Button } from "~/components/button";
+import { Input } from "~/components/input";
+import { Link } from "~/components/styled-link";
+import { Alert } from "~/components/alert";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	return await authenticator.isAuthenticated(request, {
@@ -45,7 +45,7 @@ export default function Login() {
 
 	return (
 		<div className="flex min-h-screen items-center justify-center">
-			<div className="flex w-full max-w-lg flex-col gap-10 px-4 sm:px-16">
+			<div className="flex w-full max-w-[420px] flex-col gap-10 px-4">
 				<h1 className="text-center text-2xl font-semibold">Log in to your account</h1>
 				<Form method="post" className="mx-auto flex w-full flex-col gap-6">
 					<div className="flex flex-col gap-2">

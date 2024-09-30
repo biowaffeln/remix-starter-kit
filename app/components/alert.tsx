@@ -1,6 +1,6 @@
 import { XCircleIcon } from "@heroicons/react/20/solid";
 
-export default function Alert({ messages }: { messages: string[] }) {
+export function Alert({ messages }: { messages: string[] }) {
 	return (
 		<div className="rounded-md border border-red-200 bg-red-50 p-4">
 			<div className="flex">

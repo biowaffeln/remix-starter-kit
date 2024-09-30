@@ -5,10 +5,10 @@ import { ZodError } from "zod";
 import { authenticator } from "~/auth/auth.server";
 import { createUser, UserError } from "~/auth/user.server";
 import { signupSchema } from "~/auth/validator.server";
-import Alert from "~/components/alert";
-import Button from "~/components/button";
-import Input from "~/components/input";
-import Link from "~/components/styled-link";
+import { Alert } from "~/components/alert";
+import { Button } from "~/components/button";
+import { Input } from "~/components/input";
+import { Link } from "~/components/styled-link";
 
 export async function action({ request }: LoaderFunctionArgs) {
 	try {
@@ -43,7 +43,7 @@ export default function Signup() {
 
 	return (
 		<div className="flex min-h-screen items-center justify-center">
-			<div className="flex w-full max-w-lg flex-col gap-10 px-4 sm:px-16">
+			<div className="flex w-full max-w-[420px] flex-col gap-10 px-4">
 				<h1 className="text-center text-2xl font-semibold">Sign up for an account</h1>
 				<Form method="post" className="mx-auto flex w-full flex-col gap-6">
 					<div className="flex flex-col gap-2">

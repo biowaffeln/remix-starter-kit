@@ -1,7 +1,7 @@
 import { Link as RemixLink, LinkProps } from "@remix-run/react";
 import clsx from "clsx";
 
-export default function Link({ className, ...props }: LinkProps) {
+export function Link({ className, ...props }: LinkProps) {
 	return (
 		<RemixLink
 			className={clsx(
